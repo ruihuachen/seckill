@@ -24,6 +24,20 @@ sql写在哪儿? 1.XML提供SQL 2.注解提供SQL
                           s.end_time as "seckill_endTime",
 
     2.idea的目录结构(Java+resources+test...):Project Structure -> Modules
+      格式化代码:ctrl + alt + L
 
     3.单元测试 shift+ctrl+T 以及注解Junit4和Spring整合 启动Junit4时加载SpringIOC容器
+
+
+
+    DAO层工作演变为：接口设计 + SQL编程
+                   代码和SQL的分离,方便Review
+
+                   DAO拼接等逻辑在Service层完成
+
+
+    3.Spring-IOC注入方式和场景
+        1) XML context aop mvc
+        2) 注解 @Service @Controller
+        3)Java配置类
 
