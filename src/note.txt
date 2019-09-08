@@ -1,0 +1,24 @@
+ORM框架
+MyBatis特点：参数+SQL = Entity/List
+
+sql写在哪儿? 1.XML提供SQL 2.注解提供SQL
+
+
+如何DAO接口?
+    1.Mapper自动实现DAO接口
+    2.API编程方式实现DAO接口
+
+我的收获：
+    1.MyBatis更加自由的控制SQL
+
+        查看MyBatis的官方文档
+
+        SELECT * FROM XXX
+        SELECT name, count... 优化查询速度,尤其大型数据场景下
+
+        在mybatis-cofing.xml下配置获取数据自增主键、列别名替换列名、驼峰命名转化等等
+
+        级联属性时SQL:---> s.name as "seckill.name",
+                          s.number as "seckill_number",
+                          s.start_time as "seckill_startTime",
+                          s.end_time as "seckill_endTime",
