@@ -18,7 +18,15 @@
         and number > 0;
     </update>
 
-    <select id="queryAll">
+    <select id="queryById" resultType="org.seckill.entity.Seckill">
+        SELECT
+            *
+        FROM seckill AS s
+        WHERE s.seckill_id = #{seckillId}
+    </select>
+
+
+    <select id="queryAll" resultType="org.seckill.entity.Seckill">
         select seckill_id, name, number, start_time, end_time, create_time
         from seckill
         order by create_time desc

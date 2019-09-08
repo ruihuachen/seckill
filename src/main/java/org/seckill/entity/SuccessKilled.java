@@ -12,6 +12,16 @@ public class SuccessKilled {
 
     private Date createTime;
 
+    public SuccessKilled() {
+    }
+
+    public SuccessKilled(long seckillId, long userPhone, short state, Date createTime, Seckill seckill) {
+        this.seckillId = seckillId;
+        this.userPhone = userPhone;
+        this.state = state;
+        this.createTime = createTime;
+        this.seckill = seckill;
+    }
 
     //多对一
     private Seckill seckill;
@@ -57,10 +67,14 @@ public class SuccessKilled {
         this.seckill = seckill;
     }
 
-    public SuccessKilled(long seckillId, long userPhone, short state, Date createTime) {
-        this.seckillId = seckillId;
-        this.userPhone = userPhone;
-        this.state = state;
-        this.createTime = createTime;
+    @Override
+    public String toString() {
+        return "SuccessKilled{" +
+                "seckillId=" + seckillId +
+                ", userPhone=" + userPhone +
+                ", state=" + state +
+                ", createTime=" + createTime +
+                ", seckill=" + seckill +
+                '}';
     }
 }

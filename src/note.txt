@@ -22,3 +22,8 @@ sql写在哪儿? 1.XML提供SQL 2.注解提供SQL
                           s.number as "seckill_number",
                           s.start_time as "seckill_startTime",
                           s.end_time as "seckill_endTime",
+
+    2.idea的目录结构(Java+resources+test...):Project Structure -> Modules
+
+    3.单元测试 shift+ctrl+T 以及注解Junit4和Spring整合 启动Junit4时加载SpringIOC容器
+
