@@ -6,4 +6,31 @@
          metadata-complete="true">
 
 <!--  使用maven创建的项目 修改servlet版本(tomcat里webapp里web.xml)-->
+
+    <!-- 配置SpringMVC-->
+    <servlet>
+        <servlet-name>seckill-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
+        <!-- 配置SpringMVC需要加载的配置文件
+             spring-dao.xml, spring-service.xml, spring-web.xml
+             MyBatis -> Spring -> SpringMVC
+        -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:spring/spring-*.xml</param-value>
+        </init-param>
+        <load-on-startup>
+            1
+        </load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>seckill-dispatcher</servlet-name>
+        <!-- 默认匹配所有请求-->
+        <!--直接拦截所有请求,不再采用spring2.0的/*或者*.do方式-->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+    
 </web-app>

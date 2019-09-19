@@ -1,5 +1,8 @@
 package org.seckill.enums;
 
+/**
+ * 常量枚举类
+ */
 public enum SeckillStateEnum {
     SUCCESS(1, "秒杀成功"),
     END(0, "秒杀结束"),

@@ -41,3 +41,18 @@ sql写在哪儿? 1.XML提供SQL 2.注解提供SQL
         2) 注解 @Service @Controller
         3)Java配置类
 
+
+(约定大于配置)
+声明式事务:
+    1)ProxyFactoryBean + XML
+    2)tx:advice + aop 命名空间 ---> 一次配置永久生效
+    3)注解@Transactional ---> 推荐
+
+事务方法的嵌套
+
+commit rollback
+回滚事务: 当方法遇到运行期异常 ---> rollback
+          (将编译期异常 转化成 运行期异常)
+          (对于try catch 有时感受不到默认就是commit) ---> 特别需要注意
+
+
