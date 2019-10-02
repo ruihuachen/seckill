@@ -78,10 +78,9 @@
 
 <script type="text/javascript">
     $(function (){
-
         //使用EL表达式
         seckill.detail.init({
-            seckillId: ${seckillId},
+            seckillId: ${seckill.seckillId},
             startTime: ${seckill.startTime.time},
             endTime: ${seckill.endTime.time}
         });
