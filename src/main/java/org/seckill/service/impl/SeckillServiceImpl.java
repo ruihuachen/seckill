@@ -2,6 +2,7 @@ package org.seckill.service.impl;
 
 import org.seckill.dao.SeckillDao;
 import org.seckill.dao.SuccessKilledDao;
+import org.seckill.dao.cache.RedisDao;
 import org.seckill.dto.Exposer;
 import org.seckill.dto.SeckillExecution;
 import org.seckill.entity.Seckill;
@@ -34,6 +35,9 @@ public class SeckillServiceImpl implements SeckillService {
     @Autowired
     private SuccessKilledDao successKilledDao;
 
+    @Autowired
+    private RedisDao redisDao;
+
     //(混淆)md5盐值字符串,用于混淆MD5
     private final String slat = "da>;DS:D@Fa2^2d3Ds#$@%:>>cs:?SAD*&%%$";
 
@@ -45,15 +49,46 @@ public class SeckillServiceImpl implements SeckillService {
         return seckillDao.queryById(seckillId);
     }
 
+    /**
+     * 暴露秒杀地址
+     * @param seckillId
+     * @return
+     *
+     * 用redis做缓存 ——> 减少对数据库的访问量
+     * 解决大量用户发送大量请求 ——>获取秒杀地址
+     *
+     */
     public Exposer exportSeckillUrl(long seckillId) {
 
-        Seckill seckill = seckillDao.queryById(seckillId);
+        //优化：缓存优化——> 超时的基础上维护一致性
+        //Seckill秒杀对象是不可变的 像秒杀记录有出错是直接废弃再新建而不是修改
+        /**
+         * get from cache
+         * if null
+         *  get db
+         * else
+         *  put cache
+         * cgoin
+         *
+         */
+        //1.访问redis
+        Seckill seckill = redisDao.getSeckill(seckillId);
+        if (seckill == null) {
+            //2.访问数据库
+            seckill = seckillDao.queryById(seckillId);
+            if (seckill == null) {
+                return new Exposer(false, seckillId);
+            }else {
+                //3.放入redis
+                redisDao.putSeckill(seckill);
+            }
+        }
 
         System.out.println(seckill.toString() + "\n");
 
-        if (seckill == null) {
-            return new Exposer(false, seckillId);
-        }
+//        if (seckill == null) {
+//            return new Exposer(false, seckillId);
+//        }
         Date startTime = seckill.getStartTime();
         Date endTime = seckill.getEndTime();
 
@@ -99,6 +134,9 @@ public class SeckillServiceImpl implements SeckillService {
     public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
             throws SeckillException, RepeatKillException, SeckillCloseException {
 
+
+        System.out.println(seckillId+ " "+ userPhone + " "+md5);
+
         //为空或者不等于
         if (md5 == null || !md5.equals(getMd5(seckillId))) {
             throw new SeckillException("seckill data rewrite");
@@ -107,26 +145,36 @@ public class SeckillServiceImpl implements SeckillService {
         //秒杀逻辑：减库存 + 记录购买行为
         Date currentTime = new Date();
 
+        /**
+         * 优化：减少行级锁的持有时间
+         * 先insert——> update ——> 是否秒杀成功
+         *
+         *
+         */
         try {
-            //减少库存
-            int updateCount = seckillDao.reduceNumber(seckillId, currentTime);
-            if (updateCount <= 0) {
-                //没有更新到记录,秒杀结束
-                throw new SeckillCloseException("seckill is closed");
-            } else {
-                //记录购买行为
-                int insertCount = successKilledDao.insertSuccessKilled(seckillId, userPhone);
+            //记录购买行为
+            int insertCount = successKilledDao.insertSuccessKilled(seckillId, userPhone);
 
-                //唯一：seckillId,userPhone
-                if (insertCount <= 0) {
-                    //重复秒杀
-                    throw new RepeatKillException("seckill repeated");
+            if (insertCount <= 0) {
+                //重复秒杀
+                logger.warn("重复秒杀");
+                throw new RepeatKillException("seckill repeated");
+            } else {
+                //减少库存
+                int updateCount = seckillDao.reduceNumber(seckillId, currentTime);
+
+                if (updateCount <= 0) {
+                    //没有更新到记录,秒杀结束
+                    logger.warn("没有更新数据库记录,说明秒杀结束");
+                    throw new SeckillCloseException("seckill is closed");
                 } else {
                     //秒杀成功
+                    //唯一：seckillId,userPhone
                     SuccessKilled successKilled = successKilledDao.queryByIdWithSeckill(seckillId, userPhone);
                     return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS, successKilled);
                 }
             }
+
         } catch (SeckillCloseException e1) {
             //直接抛出
             throw e1;

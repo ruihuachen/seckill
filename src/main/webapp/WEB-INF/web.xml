@@ -5,7 +5,7 @@
          version="3.1"
          metadata-complete="true">
 
-<!--  使用maven创建的项目 修改servlet版本(tomcat里webapp里web.xml)-->
+    <!--  使用maven创建的项目 修改servlet版本(tomcat里webapp里web.xml)-->
 
     <!-- 配置SpringMVC-->
     <servlet>
@@ -24,13 +24,16 @@
             1
         </load-on-startup>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>seckill-dispatcher</servlet-name>
         <!-- 默认匹配所有请求-->
         <!--直接拦截所有请求,不再采用spring2.0的/*或者*.do方式-->
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-    
-    
+
+    <welcome-file-list>
+        <welcome-file>/seckill/list</welcome-file>
+    </welcome-file-list>
+
 </web-app>

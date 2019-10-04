@@ -9,6 +9,7 @@ import org.seckill.enums.SeckillStateEnum;
  */
 public class SeckillExecution {
 
+    //秒杀商品的ID
     private long seckillId;
 
     //秒杀执行结果状态
