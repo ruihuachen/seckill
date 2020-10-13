@@ -13,7 +13,7 @@
       <!-- 3.8.1版本是默认使用的是编程的方式, 4.0以后是注解的方式-->
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.13.1</version>
       <scope>test</scope>
     </dependency>
 
